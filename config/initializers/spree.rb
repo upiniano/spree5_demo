@@ -92,3 +92,5 @@ Spree.screenshot_api_token = ENV['SCREENSHOT_API_TOKEN'] if ENV['SCREENSHOT_API_
 Rails.application.config.to_prepare do
   require_dependency 'spree/authentication_helpers'
 end
+
+Spree.root_domain = ENV.fetch('SPREE_ROOT_DOMAIN', 'localhost')
