@@ -84,6 +84,21 @@ Rails.application.configure do
     }
   end
 
+
+   # MAILGUN Configuration
+
+   config.action_mailer.delivery_method = :smtp
+   config.action_mailer.smtp_settings = {
+     address: 'smtp.mailgun.org',
+     port: 587,
+     domain: ENV['MAILGUN_DOMAIN'], # Por ejemplo, 'mg.tudominio.com'
+     user_name: ENV['MAILGUN_SMTP_USERNAME'], # Por ejemplo, 'postmaster@mg.tudominio.com'
+     password: ENV['MAILGUN_SMTP_PASSWORD'],  # Contraseña SMTP proporcionada por Mailgun
+     authentication: :plain,
+     enable_starttls_auto: true
+   }
+
+
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
   config.i18n.fallbacks = true
