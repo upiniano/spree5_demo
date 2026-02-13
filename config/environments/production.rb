@@ -69,7 +69,7 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-   config.action_mailer.default_url_options = { host: "dreambuilder.cc" }
+  # config.action_mailer.default_url_options = { host: "dreambuilder.cc" }
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
   if ENV['SENDGRID_API_KEY'].present?
@@ -95,11 +95,37 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [ :id ]
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-   config.hosts = [
-     "dreambuilder.cc",     # Allow requests from example.com
-     /.*\.dreambuilder\.cc/ # Allow requests from subdomains like `www.example.com`
-   ]
-  #
+  # config.hosts = [
+  #   "dreambuilder.cc",     # Allow requests from example.com
+  #   /.*\.dreambuilder\.cc/ # Allow requests from subdomains like `www.example.com`
+  # ]
+
+  app_host   = ENV["APP_HOST"]
+  app_domain = ENV["APP_DOMAIN"]
+
+  if app_host.present?
+    config.action_mailer.default_url_options = {
+      host: app_host,
+      protocol: "https"
+    }
+
+    config.hosts << app_host
+  end
+
+  if app_domain.present?
+    escaped_domain = Regexp.escape(app_domain)
+
+    config.hosts << app_domain
+    config.hosts << /\A.*\.#{escaped_domain}\z/
+  end
+
+  if ENV["RAILWAY_STATIC_URL"].present?
+    config.hosts << ENV["RAILWAY_STATIC_URL"]
+    config.hosts << /.*\.up\.railway\.app/
+  end
+
+  config.force_ssl = true
+
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
